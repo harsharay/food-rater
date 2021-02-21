@@ -9,6 +9,11 @@
     padding: 0 10% 0 17%;
 }
 
+.editMyChoices {
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 14px;
+}
 
 .singleDish {
     /* border: 2px solid red; */
@@ -40,4 +45,27 @@
     top: 5%;
     font-size: 24px;
     text-decoration: none;
+}
+
+.editPopup {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    background-color: white;
+    z-index: 5;
+    /* border: 2px solid red; */
+    width: 40%;
+    height: 40%;
+    border-radius: 10px;
+}
+
+.grayBackground {
+    background-color: gray;
+    opacity: 20%;
+}
+
+.editPopupClose {
+    cursor: pointer;
+    position: relative;
+    right: -150px;
 }

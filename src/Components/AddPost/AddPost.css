@@ -39,3 +39,13 @@
     font-size: 24px;
     text-decoration: none;
 }
+
+.username {
+    position:absolute;
+    top: 5%;
+    left: 5%;
+}
+
+.username span {
+    font-weight: 700;
+}

@@ -1,6 +1,7 @@
 import React,{ useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { BsLink45Deg } from "react-icons/bs"
+import EditPopup from "../EditPopup/EditPopup"
 
 import "./RateDishes.css"
 
@@ -12,21 +13,43 @@ const RateDishes = () => {
     const [votesLeft, setVotesLeft] = useState(3)
     const [userChoice, setUserChoice] = useState([])
     const [disabled, setDisabled] = useState([])
+    const [showEditPopup, setShowEditPopup] = useState(false)
+    const [showEditButton, setShowEditButton] = useState(false)
 
     //Retrieveing all the dishes data from localstorage
     useEffect(() => {
-        let postData = []
-
-        for(let i in localStorage) {
-            if(i.startsWith('foodPost')) {
-                postData.push(...JSON.parse(localStorage[i]))
-                console.log(i)
-            }
+        let user = localStorage.getItem('username')
+        if(user) {
+            setUsername(localStorage.getItem('username'))
+        }
+        
+        if(localStorage.getItem('foodPost')) {
+            let postData = JSON.parse(localStorage.getItem('foodPost'))
+            setUserAddedData(postData)
         }
 
-        setUserAddedData(postData)
-        setUsername(localStorage.getItem('username'))
+
+        if(!localStorage.getItem(user+'selectedIndices')) {
+            localStorage.setItem(user+'selectedIndices',JSON.stringify([]))
+        } else {
+            let selectedIndicesFromStorage = JSON.parse(localStorage.getItem(user+'selectedIndices'))
+            setDisabled(selectedIndicesFromStorage)
+        }
     },[])
+
+    useEffect(() => {
+        let user = localStorage.getItem('username')
+        let userChoiceFromStorage = JSON.parse(localStorage.getItem(user+'selectedIndices'))
+
+        if(userChoiceFromStorage.length > 0) {
+            setShowEditButton(true)
+        } else {
+            setShowEditButton(false)
+        }
+
+        setVotesLeft(3-userChoiceFromStorage.length)
+        // console.log(49, 3-userChoiceFromStorage.length)
+    },[disabled])
 
     //Retrieving the poll data if its stored in localstorage
     useEffect(() => {
@@ -50,10 +73,13 @@ const RateDishes = () => {
             setVotesLeft(count)
         }
 
+
+
     },[])
 
     //Add vote button
     const handleAddVote = index => {
+        let user = localStorage.getItem('username')
         if(votesLeft > 0) {
             let data = userAddedData[index]
 
@@ -61,13 +87,11 @@ const RateDishes = () => {
                 return [
                     ...prev,
                     {
-                        [data.dishName] : {
-                        
-                            username,
-                            voteNumber: 4-votesLeft,
-                            index
-                        } 
-                    }    
+                        dishName: data.dishName,
+                        username,
+                        voteNumber: 4-votesLeft,
+                        // index
+                    }  
                 ]
             })
 
@@ -79,72 +103,88 @@ const RateDishes = () => {
             }])
             setDisabled([...disabled, index])
 
+            if(localStorage.getItem(user+'selectedIndices')) {
+                let selectedIndicesFromStorage = JSON.parse(localStorage.getItem(user+'selectedIndices'))
+
+                selectedIndicesFromStorage.push(index)
+
+                localStorage.setItem(user+'selectedIndices', JSON.stringify(selectedIndicesFromStorage))
+            }
+
         } else {
             alert("Maximum 3 votes per user")
         }
-
     }
-
-    //Storing user's choice in localstorage
-    useEffect(() => {
-        let user = localStorage.getItem('username')
-        localStorage.setItem(user, JSON.stringify(userChoice))
-    },[userChoice])
 
     useEffect(() => {
         localStorage.setItem('pollData',JSON.stringify(pollData))
     },[pollData])
 
-    useEffect(() => {
-        let data = JSON.parse(localStorage['pollData'])
-        let user = localStorage.getItem('username')
+    // useEffect(() => {
+    //     let data = JSON.parse(localStorage['pollData'])
+    //     let user = localStorage.getItem('username')
 
-        let currentUserData = [] 
+    //     let currentUserData = [] 
+    
+    // },[pollData])
 
-        data.forEach(item => {
-            for(let j in item) {
-                console.log(104,item[j].username, user)
-                if(item[j].username === user) {
-                    setDisabled(prev => {
-                        return [
-                            ...prev,
-                            item[j].index
-                        ]
-                    })
-                    currentUserData.push({
-                        dish: j,
-                        vote: item[j].voteNumber
-                    })
-                }
-            }
-        })
-        localStorage.setItem(user,JSON.stringify(currentUserData))
+    const handleEditChoices = () => {
+        // let user = localStorage.getItem('username')
 
-    },[pollData])
+        // // let currentUserData = []
+
+        // let dataFromStorage = JSON.parse(localStorage.getItem(user))
+        setShowEditPopup(true)
+        // console.log(132,dataFromStorage)
+    }
+
+    const handleClose = () => {
+        setShowEditPopup(false)
+    }
 
     return (
-        <div className="rateDishes-root">
-            <p>Rate Dishes</p>
-            <div>
-                { userAddedData.length > 0 ? 
-                <div className="rateDishes-block">
-                    {userAddedData.map((item, index) => {
-                        return (
-                            <div key={index} className='singleDish'>
-                                <p>Name: <span>{item.dishName}</span></p>
-                                <p>Cuisine: <span>{item.dishCuisine}</span></p>
-                                <p>Image: <span>{item.dishImageUrl}</span></p>
-                                <p>Added by: <span>{item.username}</span></p>
-                                { !disabled.includes(index) && <button onClick={() => handleAddVote(index)}>Vote</button>}
-                            </div>
-                        )
-                    })}
-                </div>
-                :
-                <p>No data to participate in the poll</p>}
-            </div>
-            <Link to="/pollResults" className="resultsPage-link"><BsLink45Deg />Results Page</Link>
-        </div>
+        <>
+            { username ?
+                <>
+                    <div className="username">
+                        <p>Logged in as <span>{username}</span></p>
+                    </div>
+                    <div className={"rateDishes-root " + (showEditPopup ? "grayBackground" : "") }>
+                        <p>Rate Dishes</p>
+                        <div>
+                            { userAddedData.length > 0 ? 
+                            <>
+                                {showEditButton ? <button className="editMyChoices" onClick={handleEditChoices}>Edit my choices</button> : <p>Select atleast an option to edit your choices</p>}
+                                <div className="rateDishes-block">
+                                    {userAddedData.map((item, index) => {
+                                        return (
+                                            <div key={index} className='singleDish'>
+                                                <p>Name: <span>{item.dishName}</span></p>
+                                                <p>Cuisine: <span>{item.dishCuisine}</span></p>
+                                                <p>Image: <span>{item.dishImageUrl}</span></p>
+                                                <p>Added by: <span>{item.username}</span></p>
+                                                { (!disabled.includes(index) && !showEditPopup) && <button onClick={() => handleAddVote(index)}>Vote</button>}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </>
+                            :
+                            <p>No data to participate in the poll</p>}
+                        </div>
+                        <Link to="/results" className="resultsPage-link"><BsLink45Deg />Results Page</Link>
+                    </div>
+                    { showEditPopup && 
+                        <div className="editPopup">
+                            <p onClick={handleClose} className="editPopupClose">Close</p>
+                            <EditPopup />
+                        </div> 
+                    }
+                </>
+                :  
+                <p>Please <Link to="/">Login</Link></p>
+            }
+        </>
     )
 }
 

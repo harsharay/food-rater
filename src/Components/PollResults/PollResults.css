@@ -1,0 +1,41 @@
+.redColorClass {
+    color: red;
+}
+
+.pollResults-content {
+    margin-top: 5%;
+    /* border: 2px solid red; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.singleResult {
+    /* border: 2px solid blue; */
+    width: 50%;
+    margin-top: 2%;
+    text-align: left;
+    /* padding: 0 0 0 10%; */
+}
+
+.singleResultText {
+   font-size: 20px;
+}
+
+.results-info {
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 10%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.redBackground {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+
+}

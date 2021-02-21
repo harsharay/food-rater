@@ -15,8 +15,14 @@ const AddPost = (props) => {
     const [postDataArray , setPostDataArray] = useState([])
 
     const [counter, setCounter] = useState(2)
+    const [username, setUsername] = useState("")
 
-    
+    useEffect(() => {
+        if(localStorage.getItem("username")) {
+            setUsername(localStorage.getItem("username"))
+        }
+    },[])
+
     useEffect(() => {
         localStorage.setItem('counter', counter)
     },[counter])
@@ -46,11 +52,6 @@ const AddPost = (props) => {
     useEffect(() => {
         const theUsername = localStorage.getItem('username') || props.location.username
 
-        // if(localStorage.getItem(username)) {
-        //     setPostDataArray(JSON.parse(localStorage.getItem(username)))
-        //     setCounter(2 - JSON.parse(localStorage.getItem(username)).length)
-        // }
-
         for(let i in localStorage) {
             if(i.startsWith('foodPost')) {
                 setPostDataArray(JSON.parse(localStorage.getItem(i)))
@@ -78,7 +79,6 @@ const AddPost = (props) => {
 
     //props.location.username
     const handleAddPost = () => {
-
         const postCounter = localStorage.getItem('counter') || counter
 
         if(postCounter>0) {
@@ -100,6 +100,14 @@ const AddPost = (props) => {
                     ]
                 })
                 setCounter(prevValue => prevValue-1)
+                alert("Succesfull added")
+                setPostData(prev => {
+                    return {
+                        dishName: "",
+                        dishCuisine: "",
+                        dishImageUrl: ""
+                    }
+                })
             } else {
                 alert("Enter all the details")
             }
@@ -110,23 +118,32 @@ const AddPost = (props) => {
 
     return (
         <div className="addPost-root">
-            <p>Enter the details of the dish</p>
-            <div className="addPost-block">
-                <div>
-                    <p>Name of the dish</p>
-                    <input type="text" onChange={handleChange} name="dishName" value={postData.dishName}/>
-                </div>
-                <div>
-                    <p>Cuisine of the dish</p>
-                    <input type="text" onChange={handleChange} name="dishCuisine" value={postData.dishCuisine}/>
-                </div>
-                <div>
-                    <p>Image of the dish</p>
-                    <input type="text" onChange={handleChange} name="dishImageUrl" value={postData.dishImageUrl}/>
-                </div>
-                <button onClick={handleAddPost}>Add the post</button>
-            </div>
-            <Link to="/rateDishes" className="rateDishes-link"><BsLink45Deg />Go to poll</Link>
+            { username ? 
+                <>
+                    <div className="username">
+                        <p>Logged in as <span>{username}</span></p>
+                    </div>
+                    <p>Enter the details of the dish</p>
+                    <div className="addPost-block">
+                        <div>
+                            <p>Name of the dish</p>
+                            <input type="text" onChange={handleChange} name="dishName" value={postData.dishName}/>
+                        </div>
+                        <div>
+                            <p>Cuisine of the dish</p>
+                            <input type="text" onChange={handleChange} name="dishCuisine" value={postData.dishCuisine}/>
+                        </div>
+                        <div>
+                            <p>Image of the dish</p>
+                            <input type="text" onChange={handleChange} name="dishImageUrl" value={postData.dishImageUrl}/>
+                        </div>
+                        <button onClick={handleAddPost}>Add the post</button>
+                    </div>
+                    <Link to="/rateDishes" className="rateDishes-link"><BsLink45Deg />Go to poll</Link>
+                </>
+                :
+                <p>Please <Link to="/">Login</Link></p>
+            }
         </div>
     )
 }
