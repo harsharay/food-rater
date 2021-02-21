@@ -1,0 +1,43 @@
+.rateDishes-root > p{
+    font-size: 46px;
+}
+
+.rateDishes-block {
+    /* border: 2px solid yellow; */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0 10% 0 17%;
+}
+
+
+.singleDish {
+    /* border: 2px solid red; */
+    margin-top: 5%;
+    width: 50%;
+    box-shadow: 2px -1px 26px -15px rgba(0,0,0,0.75);
+    padding: 7% 7% 7% 15%;
+    font-size: 14px;
+    text-align: left;
+    font-style: italic;
+}
+
+.singleDish span {
+    font-size: 22px;
+    font-style: normal;
+    margin-left: 10px;
+}
+
+.singleDish button {
+    margin-top: 10%;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.resultsPage-link {
+    position: absolute;
+    right: 5%;
+    top: 5%;
+    font-size: 24px;
+    text-decoration: none;
+}

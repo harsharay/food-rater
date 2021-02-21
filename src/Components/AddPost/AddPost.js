@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import { BsLink45Deg } from "react-icons/bs"
 
 import "./AddPost.css"
 
@@ -37,17 +39,40 @@ const AddPost = (props) => {
             const username = localStorage.getItem('username') || props.location.username
             let dataToBeAdded = JSON.stringify(postDataArray)
 
-            localStorage.setItem(username, dataToBeAdded)
+            localStorage.setItem("foodPost", dataToBeAdded)
         }
     },[postDataArray])
 
     useEffect(() => {
-        const username = localStorage.getItem('username') || props.location.username
+        const theUsername = localStorage.getItem('username') || props.location.username
 
-        if(localStorage.getItem(username)) {
-            setPostDataArray(JSON.parse(localStorage.getItem(username)))
-            setCounter(2 - JSON.parse(localStorage.getItem(username)).length)
+        // if(localStorage.getItem(username)) {
+        //     setPostDataArray(JSON.parse(localStorage.getItem(username)))
+        //     setCounter(2 - JSON.parse(localStorage.getItem(username)).length)
+        // }
+
+        for(let i in localStorage) {
+            if(i.startsWith('foodPost')) {
+                setPostDataArray(JSON.parse(localStorage.getItem(i)))
+            }
         }
+
+        let count = 2
+        let currentUserData = []
+
+        for(let i in localStorage) {
+            if(i.startsWith('foodPost')) {
+                currentUserData = JSON.parse(localStorage.getItem(i))
+            }
+        }
+
+        currentUserData.forEach(item => {
+            if(item.username === theUsername) {
+                return count--
+            }
+        })
+
+        setCounter(count)
     },[])
 
 
@@ -69,7 +94,8 @@ const AddPost = (props) => {
                             dishName,
                             dishCuisine,
                             dishImageUrl,
-                            username
+                            username,
+                            // counter: 3-counter
                         }
                     ]
                 })
@@ -84,6 +110,7 @@ const AddPost = (props) => {
 
     return (
         <div className="addPost-root">
+            <p>Enter the details of the dish</p>
             <div className="addPost-block">
                 <div>
                     <p>Name of the dish</p>
@@ -99,6 +126,7 @@ const AddPost = (props) => {
                 </div>
                 <button onClick={handleAddPost}>Add the post</button>
             </div>
+            <Link to="/rateDishes" className="rateDishes-link"><BsLink45Deg />Go to poll</Link>
         </div>
     )
 }
