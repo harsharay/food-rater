@@ -26,6 +26,12 @@
     font-style: italic;
 }
 
+.singleDish img {
+    height: 100px;
+    width: 100px;
+    border-radius: 10px;
+}
+
 .singleDish span {
     font-size: 22px;
     font-style: normal;

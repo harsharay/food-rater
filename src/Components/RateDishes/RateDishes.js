@@ -161,7 +161,8 @@ const RateDishes = () => {
                                             <div key={index} className='singleDish'>
                                                 <p>Name: <span>{item.dishName}</span></p>
                                                 <p>Cuisine: <span>{item.dishCuisine}</span></p>
-                                                <p>Image: <span>{item.dishImageUrl}</span></p>
+                                                {/* <p>Image: <span>{item.dishImageUrl}</span></p> */}
+                                                <img src={item.dishImageUrl} alt={item.dishName}/>
                                                 <p>Added by: <span>{item.username}</span></p>
                                                 { (!disabled.includes(index) && !showEditPopup) && <button onClick={() => handleAddVote(index)}>Vote</button>}
                                             </div>
